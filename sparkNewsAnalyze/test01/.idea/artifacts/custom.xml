@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="custom">
+    <output-path>$PROJECT_DIR$/out/artifacts/custom</output-path>
+    <root id="archive" name="custom.jar">
+      <element id="directory" name="com">
+        <element id="file-copy" path="$PROJECT_DIR$/src/test/java/CustomInterceptor.java" />
+      </element>
+    </root>
+  </artifact>
+</component>
