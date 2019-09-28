@@ -1,4 +1,4 @@
-# tao
+# SparkNewAnalyze
 Spark新闻实时分析
 这里总结一下完成项目时遇到的几个问题：
 提的个建议：
