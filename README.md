@@ -8,6 +8,7 @@ Spark新闻实时分析
 HUE3.9.0又出问题，一直没有装成功，恼火！！！
 最后我去官网查了一下是因为我装的系统镜像centos6.8版本太高与HUE3.9.0冲突。
 
+![image](https://github.com/Keysluomo/SparkNewAnalyze/blob/master/image/clipboard.png)
 
 
 所以以后再做项目的时候一定要自习去官网查看清楚框架的适配情况
