@@ -20,26 +20,29 @@ IDEA
 机器1：内存5G+20G  
 机器2：内存3G+20G  
 机器3：内存3G+20G  
-
+![](https://github.com/Keysluomo/SparkNewAnalyze/blob/master/image/clipboard5.png)
 Linux配置要点  
 
 1）修改为静态IP  
 在终端命令窗口中输入  
-[root@hadoop101 /]#vim /etc/udev/rules.d/70-persistent-net.rules  
+- [root@hadoop101 /]#vim /etc/udev/rules.d/70-persistent-net.rules  
 
 进入如下页面，删除 eth0 该行；将 eth1 修改为 eth0，同时复制物理 ip 地址  
-
+![](https://github.com/Keysluomo/SparkNewAnalyze/blob/master/image/clipboard6.png)
 
 修改IP地址  
 [root@hadoop101 /]# vim /etc/sysconfig/network-scripts/ifcfg-eth0  
 
-需要修改的内容有6项：  
+需要修改的内容有6项： 
+```
 HWADDR=  
 IPADDR=  
 GATEWAY=  
 ONBOOT=yes  
 BOOTPROTO=static  
 DNS1=8.8.8.8  
+```
+
 执行：  
 [root@hadoop101 /]# service network restart  
 
@@ -60,18 +63,24 @@ hadoop101
 （5）打开/etc/hosts  
 [root@hadoop100 ~]# vim /etc/hosts  
 添加如下内容  
+```
 192.168.1.100 hadoop100  
 192.168.1.101 hadoop101  
 192.168.1.102 hadoop102  
 192.168.1.103 hadoop103  
+```
+
 （6）并重启设备，重启后，查看主机名，已经修改成功  
-2）修改 window7 的 hosts 文件  
+2）修改 window10 的 hosts 文件  
 （1）进入 C:\Windows\System32\drivers\etc 路径  
 （2）打开 hosts 文件并添加如下内容
+```
 192.168.1.100 hadoop100  
 192.168.1.101 hadoop101  
 192.168.1.102 hadoop102  
-192.168.1.103 hadoop103  
+192.168.1.103 hadoop103 
+```
+ 
 关闭防火墙  
 1）查看防火墙开机启动状态  
 [root@hadoop101 ~]# chkconfig iptables --list  
@@ -80,82 +89,98 @@ hadoop101
 在 opt 目录下创建文件  
 2）设置 atguigu 用户具有 root 权限  
 修改 /etc/sudoers 文件，找到下面一行，在 root 下面添加一行，如下所示：  
-1234 [root@hadoop101 atguigu]# vi /etc/sudoers## Allow root to run any commands anywhereroot    ALL=(ALL)     ALLatguigu   ALL=(ALL)       ALL
+[root@hadoop101 atguigu]# vi /etc/sudoers## Allow root to run any commands anywhereroot    ALL=(ALL)     ALLatguigu   ALL=(ALL)       ALL
 修改完毕，现在可以用 atguigu 帐号登录，然后用命令 su - ，即可获得 root 权限进行操作。  
 3）在/opt 目录下创建文件夹  
 （1）在 root 用户下创建 module、software 文件夹  
-12 [root@hadoop101 opt]# mkdir module[root@hadoop101 opt]# mkdir software  
-（2）修改 module、software 文件夹的所有者   
-12345678 [root@hadoop101 opt]# chown atguigu:atguigu module[root@hadoop101 opt]# chown atguigu:atguigu sofrware[root@hadoop101 opt]# ls -al总用量 16drwxr-xr-x.  6 root    root 4096 4 月  24 09:07 .dr-xr-xr-x. 23 root    root 4096 4 月  24 08:52 ..drwxr-xr-x.  4 atguigu atguigu 4096 4 月  23 16:26 moduledrwxr-xr-x.  2 atguigu atguigu 4096 4 月  23 16:25 software
-安装 jdk  
+[root@hadoop101 opt]# mkdir module[root@hadoop101 opt]# mkdir software  
+（2）修改 module、software 文件夹的所有者 
+```
+[root@hadoop101 opt]# chown atguigu:atguigu module
+[root@hadoop101 opt]# chown atguigu:atguigu sofrware
+[root@hadoop101 opt]# ls -al
+总用量 16
+drwxr-xr-x.  6 root    root 4096 4 月  24 09:07 .
+dr-xr-xr-x. 23 root    root 4096 4 月  24 08:52 ..
+drwxr-xr-x.  4 root    root 4096 4 月  23 16:26 module
+drwxr-xr-x.  2 root    root 4096 4 月  23 16:25 software
+```
+
+### 安装 jdk  
 1）卸载现有 jdk  
 （1）查询是否安装 java 软件：  
-1 [root@hadoop101 opt]# rpm -qa|grep java  
+ [root@hadoop101 opt]# rpm -qa|grep java  
 （2）如果安装的版本低于 1.7，卸载该 jdk  
-1 [root@hadoop101 opt]# rpm -e 软件包  
+ [root@hadoop101 opt]# rpm -e 软件包  
 2）用 SecureCRT 工具将 jdk、Hadoop-2.7.2.tar.gz 导入到 opt 目录下面的 software 文件夹下面  
 3）在 linux 系统下的 opt 目录中查看软件包是否导入成功  
-123 [root@hadoop101opt]# cd software/[root@hadoop101software]# lshadoop-2.7.2.tar.gz  jdk-8u144-linux-x64.tar.gz  
+ [root@hadoop101opt]# cd software/[root@hadoop101software]# lshadoop-2.7.2.tar.gz  jdk-8u144-linux-x64.tar.gz  
 4）解压 jdk 到/opt/module 目录下  
-1 [root@hadoop101software]# tar -zxvf jdk-8u144-linux-x64.tar.gz -C /opt/module/  
+ [root@hadoop101software]# tar -zxvf jdk-8u144-linux-x64.tar.gz -C /opt/module/  
 5）配置 jdk 环境变量  
 （1）先获取 jdk 路径：  
-12 [root@hadoop101 jdk1.8.0_144]# pwd/opt/module/jdk1.8.0_144  
+ [root@hadoop101 jdk1.8.0_144]# pwd/opt/module/jdk1.8.0_144  
 （2）打开/etc/profile 文件：  
-1 [root@hadoop101 jdk1.8.0_144]# vi /etc/profile  
+ [root@hadoop101 jdk1.8.0_144]# vi /etc/profile  
 在 profie 文件末尾添加 jdk 路径：   
-123 ##JAVA_HOMEexport JAVA_HOME=/opt/module/jdk1.8.0_144export PATH=$PATH:$JAVA_HOME/bin  
+ ##JAVA_HOMEexport JAVA_HOME=/opt/module/jdk1.8.0_144export PATH=$PATH:$JAVA_HOME/bin  
 （3）保存后退出：  
 :wq  
 （4）让修改后的文件生效：  
-1 [root@hadoop101 jdk1.8.0_144]# source /etc/profile  
+ [root@hadoop101 jdk1.8.0_144]# source /etc/profile  
 （5）重启（如果 java -version 可以用就不用重启）：  
-1 代码块  
+ 
 6）测试 jdk 安装成功  
-12 [root@hadoop101 jdk1.8.0_144]# java -versionjava version "1.8.0_144"  
-安装 Hadoop  
+ [root@hadoop101 jdk1.8.0_144]# java -versionjava version "1.8.0_144"  
+### 安装 Hadoop  
 1）进入到 Hadoop 安装包路径下：  
-1 [root@hadoop101 ~]# cd /opt/software/  
+[root@hadoop101 ~]# cd /opt/software/  
 2）解压安装文件到/opt/module 下面  
-1 [root@hadoop101 software]# tar -zxf hadoop-2.7.2.tar.gz -C /opt/module/  
+ [root@hadoop101 software]# tar -zxf hadoop-2.7.2.tar.gz -C /opt/module/  
 3）查看是否解压成功  
-12 [root@hadoop101 software]# ls /opt/module/hadoop-2.7.2  
+ [root@hadoop101 software]# ls /opt/module/hadoop-2.7.2  
 4）在/opt/module/hadoop-2.7.2/etc/hadoop 路径下配置 hadoop-env.sh  
 （1）Linux 系统中获取 jdk 的安装路径：  
-12 [root@hadoop101 jdk1.8.0_144]# echo $JAVA_HOME/opt/module/jdk1.8.0_144  
+ [root@hadoop101 jdk1.8.0_144]# echo $JAVA_HOME/opt/module/jdk1.8.0_144  
 （2）修改 hadoop-env.sh 文件中 JAVA_HOME 路径：  
-1 [root@hadoop101 hadoop]# vi hadoop-env.sh  
+ [root@hadoop101 hadoop]# vi hadoop-env.sh  
 修改 JAVA_HOME 如下 :  
-1 export JAVA_HOME=/opt/module/jdk1.8.0_144  
-5）将 hadoop 添加到环境变量  
+ export JAVA_HOME=/opt/module/jdk1.8.0_144  
+ 5）将 hadoop 添加到环境变量  
 （1）获取 hadoop 安装路径：  
 [root@ hadoop101 hadoop-2.7.2]# pwd  
 /opt/module/hadoop-2.7.2  
 （2）打开/etc/profile 文件：  
+```
 [root@ hadoop101 hadoop-2.7.2]# vi /etc/profile  
 在 profie 文件末尾添加 jdk 路径：（shitf+g）  
 ##HADOOP_HOME  
 export HADOOP_HOME=/opt/module/hadoop-2.7.2  
 export PATH=PATH:HADOOP_HOME/bin  
 export PATH=PATH:HADOOP_HOME/sbin  
+```
+
 （3）保存后退出：  
 :wq  
 （4）让修改后的文件生效：  
-1 [root@ hadoop101 hadoop-2.7.2]# source /etc/profile  
+ [root@ hadoop101 hadoop-2.7.2]# source /etc/profile  
 （5）重启(如果 hadoop 命令不能用再重启)：  
-12 [root@ hadoop101 hadoop-2.7.2]# sync[root@ hadoop101 hadoop-2.7.2]# reboot  
+ [root@ hadoop101 hadoop-2.7.2]# sync[root@ hadoop101 hadoop-2.7.2]# reboot  
 
 
 8）配置 ssh   
-ssh 连接时出现 Host key verification failed 的解决方法    
+ssh 连接时出现 Host key verification failed 的解决方法  
+```
 [root@hadoop101 opt]# ssh 192.168.1.103   
 The authenticity of host '192.168.1.103 (192.168.1.103)' can't be established.   
 RSA key fingerprint is cf:1e:de:d7:d0:4c:2d:98:60:b4:fd:ae:b1:2d:ad:06.   
 Are you sure you want to continue connecting (yes/no)?    
-Host key verification failed.   
+Host key verification failed. 
+```
+  
  
 解决方案如下：直接输入 yes   
-2）无密钥配置   
+### 无密钥配置   
 （1）进入到我的 home 目录   
   [root@hadoop101 opt]$ cd ~/.ssh    
 
@@ -163,13 +188,18 @@ Host key verification failed.
 [root@hadoop101 .ssh]$ ssh-keygen -t rsa    
 
 然后敲（三个回车），就会生成两个文件 id_rsa（私钥）、id_rsa.pub（公钥）   
-（3）将公钥拷贝到要免密登录的目标机器上   
+（3）将公钥拷贝到要免密登录的目标机器上 
+```
 [root@hadoop101 .ssh]$ ssh-copy-id hadoop102   
 [root@hadoop101 .ssh]$ ssh-copy-id hadoop103   
 [root@hadoop101 .ssh]$ ssh-copy-id hadoop101  
+```
 
-9）配置集群   
+
+### 配置集群 
+```
 （1）core-site.xml   
+
 [atguigu@hadoop101 hadoop]$ vi core-site.xml   
 <!-- 指定 HDFS 中 NameNode 的地址 -->    
 <property>     
@@ -205,8 +235,9 @@ hadoop101
 hadoop102   
 hadoop103   
 
- （3）yarn   
-  yarn-env.sh    
+ （3）yarn  
+yarn-env.sh    
+```
 [atguigu@hadoop102 hadoop]$ vi yarn-env.sh   
 export JAVA_HOME=/opt/module/jdk1.8.0_144   
   yarn-site.xml   
@@ -223,7 +254,9 @@ export JAVA_HOME=/opt/module/jdk1.8.0_144
  <name>yarn.resourcemanager.hostname</name>     
  <value>hadoop102</value>    
  </property>   
- </configuration>   
+ </configuration> 
+```
+  
 
  （4）mapreduce   
   mapred-env.sh    
@@ -234,10 +267,12 @@ export JAVA_HOME=/opt/module/jdk1.8.0_144
 <configuration>    
 <!-- 指定 mr 运行在 yarn 上 -->    
 <property>     
-<name>mapreduce.framework.name</name>   
+<name>mapreduce.framework.name</name>  
+```
+ 
 
   
-10）集群启动及测试     
+### 集群启动及测试     
 1）启动集群     
 如果集群是第一次启动，需要格式化namenode    
 [atguigu@hadoop101 hadoop-2.7.2]$ bin/hdfs namenode -format     
